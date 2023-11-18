@@ -1,0 +1,33 @@
+service: user
+
+frameworkVersion: '3'
+
+plugins:
+  - serverless-offline
+
+custom:
+  # env: ${file(./env/${opt:stage,'dev'}.json)}
+  serverless-offline:
+    httpPort: 4000
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'ap-northeast-2'}
+  environment:
+    NODE_ENV: ${self:provider.stage}
+
+functions:
+  login:
+    handler: handler.login
+    events:
+      - httpApi:
+          path: /users
+          method: get
+
+  package:
+    patterns:
+      - '!./**'
+      - handler.js
+    individually: true
